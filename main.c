@@ -1,5 +1,3 @@
-#include <stdio.h>
-#include <stdlib.h>
 #include <assert.h>
 #include "raylib.h"
 
@@ -63,23 +61,24 @@ int main(void)
         currentGesture = GetGestureDetected();
 
         // checks for tap
-        if (CheckCollisionPointRec(touchPosition, touchArea) && currentGesture != GESTURE_NONE)
+        if (currentGesture != GESTURE_NONE)
             if (currentGesture != lastGesture)
-                if (currentGesture == GESTURE_TAP)
-                    incPoints(&points, getCurrentStep());
-        if (CheckCollisionPointRec(touchPosition, upgradeArea) && currentGesture != GESTURE_NONE)
-            if (currentGesture != lastGesture)
-                if (currentGesture == GESTURE_TAP)
-                    incStep(&points, upgradeCost);
+                if (currentGesture == GESTURE_TAP) {
+                    if (CheckCollisionPointRec(touchPosition, touchArea))
+                        incPoints(&points, getCurrentStep());
+                    else if (CheckCollisionPointRec(touchPosition, upgradeArea))
+                        incStep(&points, upgradeCost);
+                }
         // Draw
         BeginDrawing();
-
             ClearBackground(RAYWHITE);
-            DrawRectangleRec(touchArea, GRAY);
-            DrawRectangleRec(upgradeArea, LIME); 
-            DrawText(TextFormat("upgrade costs: %i taps", upgradeCost), 100 + TEXTMARGIN, 150 + HTOUCH + TEXTMARGIN, 20, RED);
+
             DrawText(TextFormat("taps: %i", points), 10, 10, FONTSIZE, (points % 10 == 0) ? GOLD : LIGHTGRAY);
             DrawText(TextFormat("current step: %i", getCurrentStep()), 10, 10 + FONTSIZE + TEXTMARGIN, FONTSIZE, LIGHTGRAY);
+
+            DrawRectangleRec(touchArea, GRAY);
+            DrawRectangleRec(upgradeArea, LIME); 
+            DrawText(TextFormat("upgrade costs: %i taps", upgradeCost), 10, 150 + HTOUCH - TEXTMARGIN - FONTSIZE, 20, RED);
         EndDrawing();
     }
     // Close window and OpenGL context
