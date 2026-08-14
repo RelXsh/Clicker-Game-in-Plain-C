@@ -56,3 +56,5 @@ dkms.conf
 
 # Zed config для МЕНЯ, потому что ничего не работает
 .zed/
+.clangd
+save.txt
