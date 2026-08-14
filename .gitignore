@@ -53,3 +53,6 @@ dkms.conf
 
 # debug information files
 *.dwo
+
+# Zed config для МЕНЯ, потому что ничего не работает
+.zed/
