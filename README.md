@@ -2,7 +2,7 @@
 *This piece of software is the first game we've managed to get running using the Raylib game library with C.*
 
 ## Functionality
-This game prototype is as bare bones as once could be. 
+This game prototype is as bare bones as one could be. 
 You can:
 - Click a button to earn points
 - Upgrade your button to earn more points per click
