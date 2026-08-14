@@ -3,45 +3,105 @@
 #include <assert.h>
 #include "raylib.h"
 
-//------------------------------------------------------------------------------------
-// Program main entry point
-//------------------------------------------------------------------------------------
+#define FPS 60
+#define SCREENWIDTH 800
+#define SCREENHEIGHT 450
+
+// buttons size
+#define WTOUCH 100
+#define HTOUCH 100
+#define WUPGRADE 100
+#define HUPGRADE 100
+
+// margins
+#define TEXTMARGIN 5
+#define FONTSIZE 20
+
+void incPoints(int *points, int step);
+int getCurrentStep();
+void incStep(int *points, int upgradeCost);
+
 int main(void)
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    int screenWidth = SCREENWIDTH;
+    int screenHeight = SCREENHEIGHT;
 
-    InitWindow(screenWidth, screenHeight, "raylib [core] example - basic window");
+    InitWindow(screenWidth, screenHeight, "clicker");
 
-    SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
+    SetTargetFPS(FPS);
+
+    SetWindowState(FLAG_WINDOW_RESIZABLE);
     //--------------------------------------------------------------------------------------
+    
+    int points = 0;
+    int upgradeCost = 5;
+
+    Vector2 touchPosition = { 0, 0 };
+
+    int currentGesture = GESTURE_NONE;
+    int lastGesture = GESTURE_NONE;
+
+    //                      x    -y   w    h   
+    Rectangle touchArea = { 100, 100, WTOUCH, HTOUCH };
+    Rectangle upgradeArea = { 100, 150 + HTOUCH, WUPGRADE, HUPGRADE };
 
     // Main game loop
     while (!WindowShouldClose())    // Detect window close button or ESC key
     {
-        // Update
-        //----------------------------------------------------------------------------------
-        // TODO: Update your variables here
-        //----------------------------------------------------------------------------------
+        // screen resizing
+        screenWidth = GetScreenWidth();
+        screenHeight = GetScreenHeight();
+#if 0
+        Rectangle touchArea = { 100, 100, 100, 100 };
+#endif
 
+        // current touch and gesture
+        touchPosition = GetTouchPosition(0);
+        lastGesture = currentGesture;
+        currentGesture = GetGestureDetected();
+
+        // checks for tap
+        if (CheckCollisionPointRec(touchPosition, touchArea) && currentGesture != GESTURE_NONE)
+            if (currentGesture != lastGesture)
+                if (currentGesture == GESTURE_TAP)
+                    incPoints(&points, getCurrentStep());
+        if (CheckCollisionPointRec(touchPosition, upgradeArea) && currentGesture != GESTURE_NONE)
+            if (currentGesture != lastGesture)
+                if (currentGesture == GESTURE_TAP)
+                    incStep(&points, upgradeCost);
         // Draw
-        //----------------------------------------------------------------------------------
         BeginDrawing();
 
             ClearBackground(RAYWHITE);
-
-            DrawText("Congrats! You created your first window!", 190, 200, 20, LIGHTGRAY);
-
+            DrawRectangleRec(touchArea, GRAY);
+            DrawRectangleRec(upgradeArea, LIME); 
+            DrawText(TextFormat("upgrade costs: %i taps", upgradeCost), 100 + TEXTMARGIN, 150 + HTOUCH + TEXTMARGIN, 20, RED);
+            DrawText(TextFormat("taps: %i", points), 10, 10, FONTSIZE, (points % 10 == 0) ? GOLD : LIGHTGRAY);
+            DrawText(TextFormat("current step: %i", getCurrentStep()), 10, 10 + FONTSIZE + TEXTMARGIN, FONTSIZE, LIGHTGRAY);
         EndDrawing();
-        //----------------------------------------------------------------------------------
     }
-
-    // De-Initialization
-    //--------------------------------------------------------------------------------------
-    CloseWindow();        // Close window and OpenGL context
-    //--------------------------------------------------------------------------------------
-
+    // Close window and OpenGL context
+    CloseWindow();   
     return 0;
+}
+
+void incPoints(int *points, int step)
+{
+    (*points) += step;
+}
+
+int step = 1;
+int getCurrentStep()
+{
+    return step;
+}
+
+void incStep(int *points, int upgradeCost)
+{
+    if (*points >= upgradeCost) {
+        *points -= upgradeCost;
+        step++;
+    }
 }
