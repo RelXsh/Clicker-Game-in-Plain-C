@@ -67,14 +67,14 @@ int main(void)
         currentGesture = GetGestureDetected();
 
         // checks for tap
-        if (currentGesture != GESTURE_NONE)
-            if (currentGesture != lastGesture)
-                if (currentGesture == GESTURE_TAP) {
-                    if (CheckCollisionPointRec(touchPosition, touchArea))
-                        incPoints();
-                    else if (CheckCollisionPointRec(touchPosition, upgradeArea))
-                        incStep();
-                }
+        if (currentGesture == GESTURE_TAP)
+            if (currentGesture != lastGesture) {
+                if (CheckCollisionPointRec(touchPosition, touchArea))
+                    incPoints();
+                else if (CheckCollisionPointRec(touchPosition, upgradeArea))
+                    incStep();
+            }
+
         // Draw
         BeginDrawing();
             ClearBackground(RAYWHITE);
