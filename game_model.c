@@ -1,7 +1,7 @@
 #include <stdio.h>
 
 int current_points=0;
-int button_click_gain=1;
+int step=1;
 
 FILE* game_data;
 
@@ -15,7 +15,7 @@ void save_data(void)
         printf("The file is created Successfully \n");
 
     fprintf_s(game_data, "%d\n", current_points);
-    fprintf_s(game_data, "%d\n", button_click_gain);
+    fprintf_s(game_data, "%d\n", step);
     fclose(game_data);
 }
 
@@ -33,24 +33,42 @@ void load_data(void)
     {
         printf("Saved data found! Loading...\n");
         fscanf_s(game_data, "%d", &current_points);
-        fscanf_s(game_data, "%d", &button_click_gain);
+        fscanf_s(game_data, "%d", &step);
         fclose(game_data);
 
         printf_s("%d\n", current_points);
-        printf_s("%d\n", button_click_gain);
+        printf_s("%d\n", step);
     }
 }
 
-void on_button_click(void)
+void increase_points(void)
 {
-    current_points = current_points + button_click_gain;
-    // Invoke some sort of event to update the UI
+    current_points = current_points + step;
 }
 
-void upgrade_button_click_gain(int price)
+int try_upgrade_step(int price)
 {
-    button_click_gain = button_click_gain * 2;
-    current_points = current_points - price;
+    if (current_points >= price) {
+        current_points -= price;
+        step++;
+        return 1;
+    }
+    return 0;
+}
+
+int get_current_points(void)
+{
+    return current_points;
+}
+
+int get_step(void)
+{
+    return step;
+}
+
+int get_upgrade_price(void)
+{
+    return 5;
 }
 
 void initialize_game_logic(void)
