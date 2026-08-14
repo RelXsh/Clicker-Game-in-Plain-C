@@ -1,4 +1,8 @@
 #include "raylib.h"
+#include "game_model.c"
+
+void initialize_raylib(void);
+void save_data(void);
 
 int main()
 {
@@ -7,6 +11,8 @@ int main()
 
     InitWindow(screenWidth, screenHeight, "raylib basic window");
     SetTargetFPS(60);
+
+    initialize_raylib();
 
     while (!WindowShouldClose())
     {
@@ -17,5 +23,6 @@ int main()
     }
 
     CloseWindow();
+    save_data();
     return 0;
 }

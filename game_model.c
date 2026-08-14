@@ -47,8 +47,13 @@ void on_button_click(void)
     // Invoke some sort of event to update the UI
 }
 
-int main()
+void upgrade_button_click_gain(int price)
+{
+    button_click_gain = button_click_gain * 2;
+    current_points = current_points - price;
+}
+
+void initialize_game_logic(void)
 {
     load_data();
-
 }
