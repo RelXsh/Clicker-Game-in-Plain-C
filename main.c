@@ -1,5 +1,6 @@
 #include <assert.h>
 #include "raylib.h"
+#include "game_model.c"
 
 #define FPS 60
 #define SCREENWIDTH 800
@@ -15,9 +16,15 @@
 #define TEXTMARGIN 5
 #define FONTSIZE 20
 
-void incPoints(int *points, int step);
+void updateData();
+
+void incPoints();
 int getCurrentStep();
-void incStep(int *points, int upgradeCost);
+void incStep();
+
+int points;
+int upgradeCost;
+int step;
 
 int main(void)
 {
@@ -32,9 +39,8 @@ int main(void)
 
     SetWindowState(FLAG_WINDOW_RESIZABLE);
     //--------------------------------------------------------------------------------------
-    
-    int points = 0;
-    int upgradeCost = 5;
+    initialize_game_logic();    
+    updateData();
 
     Vector2 touchPosition = { 0, 0 };
 
@@ -65,42 +71,45 @@ int main(void)
             if (currentGesture != lastGesture)
                 if (currentGesture == GESTURE_TAP) {
                     if (CheckCollisionPointRec(touchPosition, touchArea))
-                        incPoints(&points, getCurrentStep());
+                        incPoints();
                     else if (CheckCollisionPointRec(touchPosition, upgradeArea))
-                        incStep(&points, upgradeCost);
+                        incStep();
                 }
         // Draw
         BeginDrawing();
             ClearBackground(RAYWHITE);
 
             DrawText(TextFormat("taps: %i", points), 10, 10, FONTSIZE, (points % 10 == 0) ? GOLD : LIGHTGRAY);
-            DrawText(TextFormat("current step: %i", getCurrentStep()), 10, 10 + FONTSIZE + TEXTMARGIN, FONTSIZE, LIGHTGRAY);
+            DrawText(TextFormat("current step: %i", step), 10, 10 + FONTSIZE + TEXTMARGIN, FONTSIZE, LIGHTGRAY);
 
             DrawRectangleRec(touchArea, GRAY);
             DrawRectangleRec(upgradeArea, LIME); 
             DrawText(TextFormat("upgrade costs: %i taps", upgradeCost), 10, 150 + HTOUCH - TEXTMARGIN - FONTSIZE, 20, RED);
         EndDrawing();
     }
+
+    save_data();
+
     // Close window and OpenGL context
     CloseWindow();   
     return 0;
 }
 
-void incPoints(int *points, int step)
+void incPoints()
 {
-    (*points) += step;
+    increase_points();
+    updateData();
 }
 
-int step = 1;
-int getCurrentStep()
+void incStep()
 {
-    return step;
+    try_upgrade_step(get_upgrade_price());
+    updateData();
 }
 
-void incStep(int *points, int upgradeCost)
+void updateData()
 {
-    if (*points >= upgradeCost) {
-        *points -= upgradeCost;
-        step++;
-    }
+    points = get_current_points();
+    upgradeCost = get_upgrade_price();
+    step = get_step();
 }

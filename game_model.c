@@ -7,21 +7,21 @@ FILE* game_data;
 
 void save_data(void)
 {
-    fopen_s(&game_data, "save.txt","w");
+    game_data = fopen("save.txt", "w");
 
     if (game_data == NULL)
         NULL;
     else
         printf("The file is created Successfully \n");
 
-    fprintf_s(game_data, "%d\n", current_points);
-    fprintf_s(game_data, "%d\n", step);
+    fprintf(game_data, "%d\n", current_points);
+    fprintf(game_data, "%d\n", step);
     fclose(game_data);
 }
 
 void load_data(void)
 {
-    fopen_s(&game_data, "save.txt","r");
+    game_data = fopen("save.txt", "r");
 
     if (game_data == NULL)
     {
@@ -32,12 +32,12 @@ void load_data(void)
     else
     {
         printf("Saved data found! Loading...\n");
-        fscanf_s(game_data, "%d", &current_points);
-        fscanf_s(game_data, "%d", &step);
+        fscanf(game_data, "%d", &current_points);
+        fscanf(game_data, "%d", &step);
         fclose(game_data);
 
-        printf_s("%d\n", current_points);
-        printf_s("%d\n", step);
+        printf("%d\n", current_points);
+        printf("%d\n", step);
     }
 }
 
